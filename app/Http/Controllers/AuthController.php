@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\NewCustomerRequest;
-use App\Http\Requests\NewMerchantRequest;
+use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\MerchantRequest;
 use App\Models\Customer;
 use App\Models\Merchant;
 use App\Models\User;
@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function addCustomer(NewCustomerRequest $newCustomerRequest)
+    public function addCustomer(CustomerRequest $customerRequest)
     {
-        $validatedData = $newCustomerRequest->validationData();
+        $validatedData = $customerRequest->validationData();
         $user =  User::create($validatedData);
 
         $customer = new Customer([
@@ -25,9 +25,9 @@ class AuthController extends Controller
         return response()->json($user->customer()->save($customer));
     }
 
-    public function addMerchant(NewMerchantRequest $newMerchantRequest)
+    public function addMerchant(MerchantRequest $merchantRequest)
     {
-        $validatedData = $newMerchantRequest->validationData();
+        $validatedData = $merchantRequest->validationData();
         $user =  User::create($validatedData);
 
         $merchant = new Merchant([
@@ -43,6 +43,7 @@ class AuthController extends Controller
         if (!Auth::attempt($LoginRequest->validationData())) {
             return response()->json(['message' => 'Bad credentials']);
         }
-        return response()->json(['message' => 'Login was successful']);
+
+        return response()->json(['token' =>  Auth::user()->createToken("auth_token")->plainTextToken]);
     }
 }

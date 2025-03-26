@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -14,7 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasApiTokens;
+    use HasFactory, Notifiable,HasApiTokens,HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -45,21 +47,21 @@ class User extends Authenticatable
      * @return array<string, string>
      */
 
-     public $incrementing = false;
-     protected $keyType = 'string';
+    //  public $incrementing = false;
+    //  protected $keyType = 'string';
 
-       /**
-     * Automatically generate a UUID when creating a new model instance.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            if (!$model->id) {
-                $model->id = Str::uuid();
-            }
-        });
-    }
+    //    /**
+    //  * Automatically generate a UUID when creating a new model instance.
+    //  */
+    // protected static function boot()
+    // {
+    //     parent::boot();
+    //     static::creating(function ($model) {
+    //         if (!$model->id) {
+    //             $model->id = Str::uuid();
+    //         }
+    //     });
+    // }
 
     protected function casts(): array
     {
@@ -69,7 +71,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function customer() : HasOne{
+    public function customer() : HasOne {
         return $this->hasOne(Customer::class);
     }
 

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class NewMerchantRequest extends FormRequest
+class CustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +26,8 @@ class NewMerchantRequest extends FormRequest
             'last_name' => 'required|string',
             'email' => 'required|email|unique:users',
             'phone' => 'required|string',
-            'store_name' => 'required|string',
-            'store_logo' => 'nullable|string',
+            'address' => 'required:string',
             'password' => 'required|confirmed'
-        ];
+         ];
     }
 }
