@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\CustomerRequest;
-use App\Http\Requests\MerchantRequest;
+use App\Http\Requests\RegisterCustomerRequest;
+use App\Http\Requests\RegisterMerchantRequest;
 use App\Models\Customer;
 use App\Models\Merchant;
 use App\Models\User;
@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function addCustomer(CustomerRequest $customerRequest)
+    public function addCustomer(RegisterCustomerRequest $registerCustomerRequest)
     {
-        $validatedData = $customerRequest->validationData();
+        $validatedData = $registerCustomerRequest->validationData();
         $user =  User::create($validatedData);
 
         $customer = new Customer([
@@ -25,9 +25,9 @@ class AuthController extends Controller
         return response()->json($user->customer()->save($customer));
     }
 
-    public function addMerchant(MerchantRequest $merchantRequest)
+    public function addMerchant(RegisterMerchantRequest $registerMerchantRequest)
     {
-        $validatedData = $merchantRequest->validationData();
+        $validatedData = $registerMerchantRequest->validationData();
         $user =  User::create($validatedData);
 
         $merchant = new Merchant([

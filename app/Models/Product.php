@@ -25,7 +25,7 @@ class Product extends Model
 
     // protected $keyType = 'string';
 
-     /**
+    /**
      * Automatically generate a UUID when creating a new model instance.
      */
     protected static function boot()
@@ -38,8 +38,18 @@ class Product extends Model
         });
     }
 
-    public function marchant() : BelongsTo{
+    public function marchant(): BelongsTo
+    {
         return $this->belongsTo(Merchant::class);
     }
-    
+
+    public function cart(): BelongsTo
+    {
+        return $this->belongsTo(Cart::class);
+    }
+
+    public function orderItem(): BelongsTo
+    {
+        return $this->belongsTo(OrderItem::class);
+    }
 }

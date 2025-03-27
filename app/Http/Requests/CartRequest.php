@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 
-class MerchantRequest extends FormRequest
+class CartRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,14 +22,11 @@ class MerchantRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'phone' => 'required|string',
-            'store_name' => 'required|string',
-            'store_logo' => 'nullable|string',
-            'password' => 'required|confirmed'
+            'product_id' => 'required|exists:' . Product::class.',id',
+            'price' => 'required|decimal:2',
+            'quantity' => 'required|integer',
         ];
     }
 }
