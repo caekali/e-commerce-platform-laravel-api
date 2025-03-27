@@ -19,7 +19,7 @@ Route::controller(AuthController::class)->prefix('/auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/me', function (Request $request) {
-        return $request->user();
+        return $request->user()->customer;
     });
 
     Route::controller(ProductController::class)->group(function () {
@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(OrderController::class)->prefix('/orders')->group(function () {
         Route::get('/', 'index');
         Route::get('/{orderId}', 'show');
-        Route::post('/', 'store');
+        Route::post('/checkout', 'store');
         Route::put('/{orderId}/cancel', 'update');
         Route::delete('/{orderId}', 'destroy');
     });

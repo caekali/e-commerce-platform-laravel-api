@@ -22,7 +22,8 @@ class ProductController extends Controller
     public function store(ProductRequest $productRequest, $merchantId)
     {
         $product = new Product($productRequest->validationData());
-        return response()->json(Auth::user()->merchant->products()->save($product));
+        $merchant = Auth::user()->merchant;
+        return response()->json($merchant->products()->save($product));
     }
 
     public function show(string $id)
@@ -30,13 +31,11 @@ class ProductController extends Controller
         return response()->json(Product::find($id));
     }
 
-
     public function update(ProductRequest $productRequest, $merchantId, string $productId)
     {
         $product = Product::find($productId);
         $product->update($productRequest->validationData());
     }
-
 
     public function destroy($merchantId, string $productId)
     {

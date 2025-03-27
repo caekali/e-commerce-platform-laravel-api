@@ -11,19 +11,15 @@ class Cart extends Model
 {
     use HasUuids;
 
-    protected $fillable =[
-        'product_id',
-        'price',
-        'quantity'
-    ];
+    protected $fillable = ['customer_id'];
+
+    public function items() : HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
 
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    public function products(): HasMany
-    {
-        return $this->hasMany(Product::class);
     }
 }

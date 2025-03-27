@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderRequest;
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -20,26 +23,41 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store()
+    public function store(OrderRequest $request)
     {
-        $cart = Auth::user()->customer->cart;
+        $validatedData = $request->validationData();
 
-        if ($cart) {
-            $totalPrice = 0.0;
-            $orderItems = [];
-            $orderIndexIndex = 0;
-            foreach ($cart as $item) {
-                $totalPrice += $item['price'];
-                $orderItems[$orderIndexIndex++] = new OrderItem(['product_id' => $item->product_id, 'price' => $item->price, 'quantity' => $item->quantity]);
+        DB::beginTransaction();
+        try {
+            // Retrieve the cart
+            $cart = Cart::where('id', $validatedData['cart_id'])->with('items')->first();
+
+            // Create the order
+            $order = Order::create([
+                'customer_id' => $validatedData['customer_id'],
+                'total_price' => $cart->items->sum(fn($item) => $item->price * $item->quantity),
+                'status' => 'pending'
+            ]);
+
+            // Move cart items to order items
+            foreach ($cart->items as $cartItem) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $cartItem->product_id,
+                    'quantity' => $cartItem->quantity,
+                    'price' => $cartItem->price,
+                ]);
             }
 
-            $order = new Order(['total_price' => $totalPrice, 'status' => 'pending']);
-            $order = Auth::user()->customer->orders()->save($order);
-            foreach ($cart as $item) {
-                $totalPrice += $item['price'];
-            }
-            
-            $order->orderItems()->saveMany($orderItems);
+            // Clear the cart
+            // $cart->items()->delete();
+            // $cart->delete();
+
+            DB::commit();
+            return response()->json(['message' => 'Order placed successfully', 'order' => $order], 201);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'Order placement failed', 'details' => $e->getMessage()], 500);
         }
     }
 

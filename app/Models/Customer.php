@@ -22,9 +22,9 @@ class Customer extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function cart(): HasMany
+    public function cart(): HasOne
     {
-        return $this->hasMany(Cart::class);
+        return $this->hasOne(Cart::class);
     }
 
 

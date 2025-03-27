@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CartRequest;
 use App\Http\Requests\UpdateCartRequest;
 use App\Models\Cart;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,8 @@ class CartController extends Controller
      */
     public function index()
     {
-        return response()->json(Auth::user()->customer->cart);
+        $customer = Auth::user()->customer;
+        return response()->json($customer->cart->items);
     }
 
     /**
@@ -23,15 +25,21 @@ class CartController extends Controller
      */
     public function store(CartRequest $cartRequest)
     {
-        $cart = new Cart($cartRequest->validated());
-        Auth::user()->customer->cart()->save($cart);
+        $customer = Auth::user()->customer;
+        $cart = Cart::where('customer_id', $customer->id)->first();
+        if (!$cart) {
+            $customer->cart()->save(new Cart());
+            $cart = Cart::where('customer_id', $customer->id)->get();
+        }
+        $customer->refresh();
+        $cart->items()->save(new CartItem($cartRequest->validated()));
     }
-
 
     public function update(UpdateCartRequest $request, $cartId)
     {
         $cart = Cart::find($cartId);
-        $cart->update($request->validationData());
+        $cartItem = $cart->items()->find($request['cart_item_id']);
+        $cartItem->update($request->safe()->only(['quantity']));
     }
 
 

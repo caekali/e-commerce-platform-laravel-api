@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\CartItem;
 
 class UpdateCartRequest extends FormRequest
 {
@@ -22,6 +23,7 @@ class UpdateCartRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'cart_item_id' => 'required|exists:' . CartItem::class . ',id',
             'quantity' => 'required|integer',
         ];
     }

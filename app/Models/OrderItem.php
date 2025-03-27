@@ -12,6 +12,7 @@ class OrderItem extends Model
     use HasUuids;
 
     protected $fillable = [
+        'order_id',
         'product_id',
         'price',
         'quantity'

@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Models\Product;
+
+
 use Illuminate\Foundation\Http\FormRequest;
 
 class CartRequest extends FormRequest
@@ -24,7 +26,7 @@ class CartRequest extends FormRequest
     {
 
         return [
-            'product_id' => 'required|exists:' . Product::class.',id',
+            'product_id' => 'required|exists:' . Product::class . ',id',
             'price' => 'required|decimal:2',
             'quantity' => 'required|integer',
         ];
